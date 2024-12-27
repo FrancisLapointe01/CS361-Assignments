@@ -1,0 +1,41 @@
+int AR = 0;
+int AW = 0;
+condition CV = NIL;
+Lock lock;
+
+Reader() {
+acquire(&lock);
+
+while AW > 0 {
+cond_wait (&CV, &lock)
+}
+
+AR++;
+release(&lock);
+
+AccessDatabase(ReadOnly);
+acquire(&lock);
+AR--;
+
+if AR = 0 and AW = 0 {
+cond_signal(&CV);
+}
+release(&lock);
+}
+
+Writer(){
+
+acquire(&lock);
+
+while AR > 0 or AW > 0 {
+cond_wait(&CV,&lock);
+}
+AW++
+release(&lock);
+
+AccessDatabase(ReadOnly);
+acquire(&lock);
+AW--;
+cond_signal(&CV);
+release(&lock);
+}
